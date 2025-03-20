@@ -786,6 +786,59 @@ function getCurrencySymbol(currencyCode) {
     return symbols[currencyCode] || currencyCode;
 }
 
+// Функция для инициализации мобильной навигации
+function initMobileNav() {
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const backdrop = document.getElementById('menuBackdrop');
+    const body = document.body;
+    
+    if (!mobileNavToggle || !sidebar || !backdrop) return;
+    
+    // Переключение состояния мобильного меню
+    mobileNavToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        backdrop.classList.toggle('active');
+        mobileNavToggle.querySelector('i').classList.toggle('fa-bars');
+        mobileNavToggle.querySelector('i').classList.toggle('fa-times');
+        body.classList.toggle('menu-open');
+    });
+    
+    // Закрытие меню при клике на подложку
+    backdrop.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        backdrop.classList.remove('active');
+        mobileNavToggle.querySelector('i').classList.add('fa-bars');
+        mobileNavToggle.querySelector('i').classList.remove('fa-times');
+        body.classList.remove('menu-open');
+    });
+    
+    // Закрытие меню при клике на пункт меню
+    const menuLinks = document.querySelectorAll('.menu a');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('active');
+                backdrop.classList.remove('active');
+                mobileNavToggle.querySelector('i').classList.add('fa-bars');
+                mobileNavToggle.querySelector('i').classList.remove('fa-times');
+                body.classList.remove('menu-open');
+            }
+        });
+    });
+    
+    // Настройка поведения при изменении размера окна
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024) {
+            sidebar.classList.remove('active');
+            backdrop.classList.remove('active');
+            mobileNavToggle.querySelector('i').classList.add('fa-bars');
+            mobileNavToggle.querySelector('i').classList.remove('fa-times');
+            body.classList.remove('menu-open');
+        }
+    });
+}
+
 // Обработчики событий
 document.addEventListener('DOMContentLoaded', async () => {
     // Инициализация графиков
@@ -894,6 +947,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Инициализация при загрузке страницы
     console.log('Инициализация данных при загрузке...');
     await updatePeriodData('7d'); // Загружаем данные за 7 дней по умолчанию
+
+    // Инициализация мобильной навигации
+    initMobileNav();
 });
 
 // Функция инициализации темы

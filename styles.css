@@ -699,31 +699,245 @@ body {
     }
     
     .sidebar {
-        display: none;
+        position: fixed;
+        left: -300px;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s ease;
+        box-shadow: var(--shadow-large);
+    }
+    
+    .sidebar.active {
+        left: 0;
+    }
+    
+    .mobile-nav-toggle {
+        display: block;
     }
     
     .content {
         max-height: 100vh;
+        padding-top: 3rem;
+    }
+    
+    body.menu-open {
+        overflow: hidden;
+    }
+    
+    .backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .backdrop.active {
+        display: block;
+        opacity: 1;
     }
 }
 
 @media (max-width: 768px) {
     .content {
         padding: 0.75rem;
+        padding-top: 3rem;
     }
     
     .top-bar {
         flex-direction: column;
         gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .stat-card {
+        padding: 0.75rem;
+    }
+    
+    .stat-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .stat-info h3 {
+        font-size: 0.9rem;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+    }
+    
+    .chart-card {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem;
+    }
+    
+    .card-header h2 {
+        font-size: 1rem;
+    }
+    
+    .period-btn {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.75rem;
     }
     
     .converter {
         grid-template-columns: 1fr;
+        gap: 0.5rem;
     }
     
     .converter-swap {
-        margin: 0.25rem 0;
+        margin: 0.5rem auto;
         transform: rotate(90deg);
+    }
+    
+    .converter-input input, 
+    .converter-input select {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+    
+    .rates-grid {
+        gap: 0.5rem;
+    }
+    
+    .rate-item {
+        padding: 0.75rem;
+    }
+    
+    .currency-icon {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    .currency-info strong {
+        font-size: 0.9rem;
+    }
+    
+    .currency-name {
+        font-size: 0.75rem;
+    }
+    
+    .rate-value {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.75rem;
+    }
+    
+    .stat-info {
+        text-align: right;
+    }
+    
+    .bottom-cards {
+        grid-template-columns: 1fr;
+        max-height: none;
+    }
+    
+    .rates-card, 
+    .converter-card {
+        max-height: none;
+    }
+    
+    .rates-grid {
+        max-height: 300px;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+    
+    .history-filters {
+        flex-direction: column;
+        padding: 0.75rem;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .history-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .history-table th:nth-child(2),
+    .history-table td:nth-child(2),
+    .history-table th:nth-child(4),
+    .history-table td:nth-child(4) {
+        display: none;
+    }
+    
+    .settings-card {
+        padding: 0.75rem;
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .setting-control {
+        width: 100%;
+    }
+    
+    .crypto-checkboxes {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .settings-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .settings-actions button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .page-title h1 {
+        font-size: 1.1rem;
+    }
+    
+    .currency-selector select {
+        width: 100%;
+    }
+    
+    .crypto-checkboxes {
+        grid-template-columns: 1fr;
+    }
+    
+    .period-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .chart-container {
+        height: 180px;
     }
 }
 
@@ -1520,4 +1734,19 @@ input:checked + .toggle-slider:before {
 
 .compact-mode .setting-item {
     padding: 0.7rem;
+}
+
+/* Мобильная навигация и гамбургер меню */
+.mobile-nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
 }

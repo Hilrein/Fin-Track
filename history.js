@@ -628,7 +628,60 @@ function toggleTheme() {
     showNotification(`Тема переключена на ${newTheme === 'light' ? 'светлую' : 'темную'}`, 'info');
 }
 
-// Инициализация страницы при загрузке
+// Функция для инициализации мобильной навигации
+function initMobileNav() {
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const backdrop = document.getElementById('menuBackdrop');
+    const body = document.body;
+    
+    if (!mobileNavToggle || !sidebar || !backdrop) return;
+    
+    // Переключение состояния мобильного меню
+    mobileNavToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        backdrop.classList.toggle('active');
+        mobileNavToggle.querySelector('i').classList.toggle('fa-bars');
+        mobileNavToggle.querySelector('i').classList.toggle('fa-times');
+        body.classList.toggle('menu-open');
+    });
+    
+    // Закрытие меню при клике на подложку
+    backdrop.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        backdrop.classList.remove('active');
+        mobileNavToggle.querySelector('i').classList.add('fa-bars');
+        mobileNavToggle.querySelector('i').classList.remove('fa-times');
+        body.classList.remove('menu-open');
+    });
+    
+    // Закрытие меню при клике на пункт меню
+    const menuLinks = document.querySelectorAll('.menu a');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('active');
+                backdrop.classList.remove('active');
+                mobileNavToggle.querySelector('i').classList.add('fa-bars');
+                mobileNavToggle.querySelector('i').classList.remove('fa-times');
+                body.classList.remove('menu-open');
+            }
+        });
+    });
+    
+    // Настройка поведения при изменении размера окна
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024) {
+            sidebar.classList.remove('active');
+            backdrop.classList.remove('active');
+            mobileNavToggle.querySelector('i').classList.add('fa-bars');
+            mobileNavToggle.querySelector('i').classList.remove('fa-times');
+            body.classList.remove('menu-open');
+        }
+    });
+}
+
+// Инициализация всех функций при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     // Инициализация темы
     initTheme();
@@ -688,4 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Активируем обработчик для переключения темы
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    
+    // Инициализация мобильной навигации
+    initMobileNav();
 }); 
