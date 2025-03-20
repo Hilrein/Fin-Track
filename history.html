@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История операций - Finance Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet"></i>
+                <h2>FinTrack</h2>
+            </div>
+            <nav class="menu">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Дашборд</a>
+                <a href="history.html" class="active"><i class="fas fa-history"></i> История</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+            </nav>
+            <div class="theme-toggle">
+                <span>Тема</span>
+                <div class="switch" id="themeToggle">
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>История операций</h1>
+                    <p>Отслеживайте все операции по обмену криптовалют</p>
+                </div>
+                <div class="currency-selector">
+                    <select id="baseCurrency">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="RUB">RUB</option>
+                        <option value="KZT">KZT</option>
+                    </select>
+                </div>
+            </header>
+
+            <div class="history-filters">
+                <div class="filter-group">
+                    <label>Период:</label>
+                    <select id="historyPeriod">
+                        <option value="all">Все время</option>
+                        <option value="month">Последний месяц</option>
+                        <option value="week">Последняя неделя</option>
+                        <option value="day">Последние 24 часа</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Тип операции:</label>
+                    <select id="operationType">
+                        <option value="all">Все операции</option>
+                        <option value="buy">Покупка</option>
+                        <option value="sell">Продажа</option>
+                        <option value="exchange">Обмен</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Криптовалюта:</label>
+                    <select id="cryptoCurrency">
+                        <option value="all">Все</option>
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                        <option value="XRP">Ripple (XRP)</option>
+                        <option value="LTC">Litecoin (LTC)</option>
+                    </select>
+                </div>
+                <button id="applyFilters" class="apply-filters-btn">
+                    <i class="fas fa-filter"></i> Применить
+                </button>
+            </div>
+
+            <div class="history-summary">
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>Всего операций</h3>
+                        <p class="summary-value">28</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>Покупки</h3>
+                        <p class="summary-value">16</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>Продажи</h3>
+                        <p class="summary-value">12</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>Общий оборот</h3>
+                        <p class="summary-value">$12,456.78</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-container">
+                <div class="card-header">
+                    <h2>Список операций</h2>
+                    <div class="card-actions">
+                        <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Тип</th>
+                                <th>Из</th>
+                                <th>В</th>
+                                <th>Курс</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>21.03.2024 14:32</td>
+                                <td><span class="badge buy">Покупка</span></td>
+                                <td>USD</td>
+                                <td><i class="fab fa-bitcoin"></i> BTC</td>
+                                <td>$84,211.45</td>
+                                <td>0.00125 BTC</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                            <tr>
+                                <td>20.03.2024 09:15</td>
+                                <td><span class="badge exchange">Обмен</span></td>
+                                <td><i class="fab fa-bitcoin"></i> BTC</td>
+                                <td><i class="fab fa-ethereum"></i> ETH</td>
+                                <td>1 BTC = 37.28 ETH</td>
+                                <td>0.05 BTC → 1.864 ETH</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                            <tr>
+                                <td>18.03.2024 22:40</td>
+                                <td><span class="badge sell">Продажа</span></td>
+                                <td><i class="fab fa-ethereum"></i> ETH</td>
+                                <td>EUR</td>
+                                <td>€2,045.32</td>
+                                <td>0.5 ETH</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                            <tr>
+                                <td>15.03.2024 11:23</td>
+                                <td><span class="badge buy">Покупка</span></td>
+                                <td>RUB</td>
+                                <td><i class="fab fa-ethereum"></i> ETH</td>
+                                <td>₽170,842.56</td>
+                                <td>0.12 ETH</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                            <tr>
+                                <td>12.03.2024 16:05</td>
+                                <td><span class="badge exchange">Обмен</span></td>
+                                <td><i class="fab fa-ethereum"></i> ETH</td>
+                                <td>XRP</td>
+                                <td>1 ETH = 1,452.8 XRP</td>
+                                <td>0.25 ETH → 363.2 XRP</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                            <tr>
+                                <td>10.03.2024 08:17</td>
+                                <td><span class="badge sell">Продажа</span></td>
+                                <td><i class="fab fa-bitcoin"></i> BTC</td>
+                                <td>USD</td>
+                                <td>$80,124.31</td>
+                                <td>0.02 BTC</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                            <tr>
+                                <td>05.03.2024 19:42</td>
+                                <td><span class="badge buy">Покупка</span></td>
+                                <td>KZT</td>
+                                <td><i class="fab fa-bitcoin"></i> BTC</td>
+                                <td>₸38,245,621.55</td>
+                                <td>0.00075 BTC</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                            <tr>
+                                <td>01.03.2024 13:50</td>
+                                <td><span class="badge sell">Продажа</span></td>
+                                <td>XRP</td>
+                                <td>USD</td>
+                                <td>$0.52</td>
+                                <td>200 XRP</td>
+                                <td><span class="status completed">Завершено</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button class="pagination-btn prev" disabled><i class="fas fa-chevron-left"></i></button>
+                    <div class="page-numbers">
+                        <button class="page-number active">1</button>
+                        <button class="page-number">2</button>
+                        <button class="page-number">3</button>
+                        <span class="page-dots">...</span>
+                        <button class="page-number">8</button>
+                    </div>
+                    <button class="pagination-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="history.js"></script>
+</body>
+</html> 

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки - Finance Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet"></i>
+                <h2>FinTrack</h2>
+            </div>
+            <nav class="menu">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Дашборд</a>
+                <a href="history.html"><i class="fas fa-history"></i> История</a>
+                <a href="settings.html" class="active"><i class="fas fa-cog"></i> Настройки</a>
+            </nav>
+            <div class="theme-toggle">
+                <span>Тема</span>
+                <div class="switch" id="themeToggle">
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>Настройки</h1>
+                    <p>Персонализируйте ваш финансовый дашборд</p>
+                </div>
+            </header>
+
+            <div class="settings-container">
+                <!-- Персонализация -->
+                <div class="settings-section">
+                    <h2 class="settings-title"><i class="fas fa-user-cog"></i> Персонализация</h2>
+                    <div class="settings-card">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Тема оформления</h3>
+                                <p>Выберите светлую или темную тему для интерфейса</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="themeSelect">
+                                    <option value="dark">Темная</option>
+                                    <option value="light">Светлая</option>
+                                    <option value="system">Системная</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Основная валюта</h3>
+                                <p>Валюта, используемая по умолчанию в графиках и конвертере</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="defaultCurrency">
+                                    <option value="USD">USD (Доллар США)</option>
+                                    <option value="EUR">EUR (Евро)</option>
+                                    <option value="RUB">RUB (Российский рубль)</option>
+                                    <option value="KZT">KZT (Казахстанский тенге)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Отображение -->
+                <div class="settings-section">
+                    <h2 class="settings-title"><i class="fas fa-desktop"></i> Отображение</h2>
+                    <div class="settings-card">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Период графиков по умолчанию</h3>
+                                <p>Выберите период, который будет использоваться при загрузке графиков</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="defaultPeriod">
+                                    <option value="7">7 дней</option>
+                                    <option value="14">14 дней</option>
+                                    <option value="30">30 дней</option>
+                                    <option value="90">90 дней</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Количество знаков после запятой</h3>
+                                <p>Точность отображения курсов валют</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="decimalPlaces">
+                                    <option value="2">2 знака</option>
+                                    <option value="3">3 знака</option>
+                                    <option value="4">4 знака</option>
+                                    <option value="5">5 знаков</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Компактный режим</h3>
+                                <p>Уменьшенные отступы для отображения большего количества информации</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="compactMode">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Уведомления -->
+                <div class="settings-section">
+                    <h2 class="settings-title"><i class="fas fa-bell"></i> Уведомления</h2>
+                    <div class="settings-card">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Включить уведомления</h3>
+                                <p>Разрешить приложению показывать уведомления</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="enableNotifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Уведомления об обновлении курсов</h3>
+                                <p>Получать уведомления при изменении курсов валют</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="rateChangeNotifications">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Длительность отображения</h3>
+                                <p>Как долго показывать уведомления (в секундах)</p>
+                            </div>
+                            <div class="setting-control">
+                                <input type="range" id="notificationDuration" min="1" max="10" value="3" class="slider">
+                                <span id="durationValue">3 сек</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Данные -->
+                <div class="settings-section">
+                    <h2 class="settings-title"><i class="fas fa-database"></i> Данные</h2>
+                    <div class="settings-card">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Автоматическое обновление</h3>
+                                <p>Периодически обновлять данные о курсах валют</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="autoRefresh">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Интервал обновления</h3>
+                                <p>Частота обновления данных (в минутах)</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="refreshInterval">
+                                    <option value="1">1 минута</option>
+                                    <option value="5" selected>5 минут</option>
+                                    <option value="15">15 минут</option>
+                                    <option value="30">30 минут</option>
+                                    <option value="60">1 час</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Отображаемые криптовалюты</h3>
+                                <p>Выберите, какие криптовалюты показывать на дашборде</p>
+                            </div>
+                            <div class="setting-control crypto-checkboxes">
+                                <label><input type="checkbox" name="displayedCrypto" value="BTC" checked> Bitcoin (BTC)</label>
+                                <label><input type="checkbox" name="displayedCrypto" value="ETH" checked> Ethereum (ETH)</label>
+                                <label><input type="checkbox" name="displayedCrypto" value="XRP"> Ripple (XRP)</label>
+                                <label><input type="checkbox" name="displayedCrypto" value="LTC"> Litecoin (LTC)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Экспорт/Импорт -->
+                <div class="settings-section">
+                    <h2 class="settings-title"><i class="fas fa-file-export"></i> Экспорт/Импорт</h2>
+                    <div class="settings-card">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Экспорт настроек</h3>
+                                <p>Сохранить текущие настройки в файл</p>
+                            </div>
+                            <div class="setting-control">
+                                <button id="exportSettings" class="btn-primary">
+                                    <i class="fas fa-download"></i> Экспорт
+                                </button>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Импорт настроек</h3>
+                                <p>Загрузить настройки из файла</p>
+                            </div>
+                            <div class="setting-control">
+                                <label for="importSettings" class="btn-primary">
+                                    <i class="fas fa-upload"></i> Импорт
+                                </label>
+                                <input type="file" id="importSettings" accept=".json" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h3>Сбросить настройки</h3>
+                                <p>Вернуть все настройки к значениям по умолчанию</p>
+                            </div>
+                            <div class="setting-control">
+                                <button id="resetSettings" class="btn-danger">
+                                    <i class="fas fa-undo"></i> Сбросить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="settings-actions">
+                    <button id="saveSettings" class="btn-success">
+                        <i class="fas fa-save"></i> Сохранить настройки
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html> 

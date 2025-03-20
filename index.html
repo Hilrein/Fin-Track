@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet"></i>
+                <h2>FinTrack</h2>
+            </div>
+            <nav class="menu">
+                <a href="index.html" class="active"><i class="fas fa-chart-line"></i> Дашборд</a>
+                <a href="history.html"><i class="fas fa-history"></i> История</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+            </nav>
+            <div class="theme-toggle">
+                <span>Тема</span>
+                <div class="switch" id="themeToggle">
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>Финансовый Дашборд</h1>
+                    <p>Отслеживайте курсы валют и криптовалют в реальном времени</p>
+                </div>
+                <div class="currency-selector">
+                    <select id="baseCurrency">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="RUB">RUB</option>
+                        <option value="KZT">KZT</option>
+                    </select>
+                </div>
+            </header>
+
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon bitcoin">
+                        <i class="fab fa-bitcoin"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Bitcoin</h3>
+                        <p class="stat-value">$84,455.56</p>
+                        <p class="stat-change negative">-1.40% <i class="fas fa-arrow-down"></i></p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon ethereum">
+                        <i class="fab fa-ethereum"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Ethereum</h3>
+                        <p class="stat-value">$1,979.28</p>
+                        <p class="stat-change negative">-3.12% <i class="fas fa-arrow-down"></i></p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon euro">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Euro</h3>
+                        <p class="stat-value">0.9171 USD</p>
+                        <p class="stat-change positive">+0.23% <i class="fas fa-arrow-up"></i></p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon ruble">
+                        <i class="fas fa-ruble-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Рубль</h3>
+                        <p class="stat-value">83.5225 USD</p>
+                        <p class="stat-change negative">-0.47% <i class="fas fa-arrow-down"></i></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h2>Курс основных валют</h2>
+                        <div class="card-actions">
+                            <button class="period-btn active">7д</button>
+                            <button class="period-btn">30д</button>
+                            <button class="period-btn">3м</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="currencyChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h2>Динамика криптовалют</h2>
+                        <div class="card-actions">
+                            <button class="period-btn active">7д</button>
+                            <button class="period-btn">30д</button>
+                            <button class="period-btn">3м</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cryptoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-cards">
+                <div class="rates-card">
+                    <div class="card-header">
+                        <h2>Текущие курсы</h2>
+                        <div class="card-actions">
+                            <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="rates-grid" id="currentRates">
+                        <div class="rate-item">
+                            <div class="currency-info">
+                                <div class="currency-icon eur"><i class="fas fa-euro-sign"></i></div>
+                                <div>
+                                    <strong>EUR</strong>
+                                    <span class="currency-name">Евро</span>
+                                </div>
+                            </div>
+                            <div class="rate-value">0.9171 USD</div>
+                        </div>
+                        <div class="rate-item">
+                            <div class="currency-info">
+                                <div class="currency-icon gbp"><i class="fas fa-pound-sign"></i></div>
+                                <div>
+                                    <strong>GBP</strong>
+                                    <span class="currency-name">Фунт стерлингов</span>
+                                </div>
+                            </div>
+                            <div class="rate-value">0.7697 USD</div>
+                        </div>
+                        <div class="rate-item">
+                            <div class="currency-info">
+                                <div class="currency-icon jpy"><i class="fas fa-yen-sign"></i></div>
+                                <div>
+                                    <strong>JPY</strong>
+                                    <span class="currency-name">Японская иена</span>
+                                </div>
+                            </div>
+                            <div class="rate-value">149.1772 USD</div>
+                        </div>
+                        <div class="rate-item">
+                            <div class="currency-info">
+                                <div class="currency-icon rub"><i class="fas fa-ruble-sign"></i></div>
+                                <div>
+                                    <strong>RUB</strong>
+                                    <span class="currency-name">Российский рубль</span>
+                                </div>
+                            </div>
+                            <div class="rate-value">83.5225 USD</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="converter-card">
+                    <div class="card-header">
+                        <h2>Конвертер валют</h2>
+                    </div>
+                    <div class="converter">
+                        <div class="converter-group">
+                            <label>Из</label>
+                            <div class="converter-input">
+                                <input type="number" id="amount" value="1" min="0">
+                                <select id="fromCurrency">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="RUB">RUB</option>
+                                    <option value="KZT">KZT</option>
+                                    <option value="BTC">BTC</option>
+                                    <option value="ETH">ETH</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="converter-swap">
+                            <button id="swapCurrencies">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="converter-group">
+                            <label>В</label>
+                            <div class="converter-input">
+                                <input type="number" id="result" readonly>
+                                <select id="toCurrency">
+                                    <option value="RUB">RUB</option>
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="KZT">KZT</option>
+                                    <option value="BTC">BTC</option>
+                                    <option value="ETH">ETH</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
