@@ -1,23 +1,18 @@
-// Используем бесплатные API
 const EXCHANGE_API_URL = 'https://open.er-api.com/v6/latest';
 const CRYPTO_API_URL = 'https://api.coingecko.com/api/v3';
 
-// Состояние приложения
 let state = {
     baseCurrency: 'USD',
     currencyChart: null,
     cryptoChart: null,
-    currentPeriod: '7d' // Добавляем отслеживание текущего периода
+    currentPeriod: '7d' 
 };
 
-// Инициализация графиков
 function initializeCharts() {
-    // Настройки для всех графиков
     Chart.defaults.color = '#94a3b8';
     Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
     Chart.defaults.font.family = "'Inter', 'Segoe UI', sans-serif";
 
-    // График валют
     const currencyCtx = document.getElementById('currencyChart').getContext('2d');
     state.currencyChart = new Chart(currencyCtx, {
         type: 'line',
@@ -73,7 +68,6 @@ function initializeCharts() {
         }
     });
 
-    // График криптовалют
     const cryptoCtx = document.getElementById('cryptoChart').getContext('2d');
     state.cryptoChart = new Chart(cryptoCtx, {
         type: 'line',
@@ -131,7 +125,6 @@ function initializeCharts() {
     });
 }
 
-// Функция конвертации валют
 function convertCurrency() {
     const amount = parseFloat(document.getElementById('amount').value);
     const fromCurrency = document.getElementById('fromCurrency').value;
@@ -142,13 +135,11 @@ function convertCurrency() {
         return;
     }
 
-    // Расчет курса конвертации
     let rate = 1;
     
     if (fromCurrency === toCurrency) {
         rate = 1;
     } else {
-        // Используем известные курсы
         const rates = {
             'USD': 1,
             'EUR': 0.9171,
@@ -160,7 +151,6 @@ function convertCurrency() {
             'ETH': 1/1979.28
         };
 
-        // Формула конвертации
         rate = rates[toCurrency] / rates[fromCurrency];
     }
 
@@ -168,11 +158,8 @@ function convertCurrency() {
     document.getElementById('result').value = result.toFixed(6);
 }
 
-// Получение исторических данных для валют
 async function fetchHistoricalRates(days) {
     try {
-        // Для простоты будем использовать последние курсы и генерировать историю на их основе
-        // так как большинство API имеют ограничения на исторические данные
         const response = await fetch(`${EXCHANGE_API_URL}/${state.baseCurrency}`);
         if (!response.ok) {
             throw new Error(`Ошибка запроса: ${response.status}`);
@@ -186,7 +173,6 @@ async function fetchHistoricalRates(days) {
         
         console.log('Полученные курсы валют:', data.rates);
         
-        // Генерируем историю на основе текущих курсов
         const historicalData = [];
         const today = new Date();
         
@@ -195,10 +181,9 @@ async function fetchHistoricalRates(days) {
             date.setDate(date.getDate() - i);
             const dateStr = date.toISOString().split('T')[0];
             
-            // Небольшая случайная вариация курсов для имитации исторических данных
             const randomRates = {};
             Object.keys(data.rates).forEach(currency => {
-                const variance = 0.98 + Math.random() * 0.04; // ±2%
+                const variance = 0.98 + Math.random() * 0.04; 
                 randomRates[currency] = data.rates[currency] * variance;
             });
             
@@ -213,24 +198,20 @@ async function fetchHistoricalRates(days) {
     } catch (error) {
         console.error('Ошибка при получении исторических данных:', error);
         
-        // Возвращаем фиктивные данные в случае ошибки
         return generateDummyRates(days, state.baseCurrency);
     }
 }
 
-// Функция для генерации фиктивных курсов валют
 function generateDummyRates(days, baseCurrency) {
     const dummyData = [];
     const today = new Date();
     
-    // Базовые курсы для разных валют (относительно USD)
     const baseRates = {
         'USD': { 'EUR': 0.92, 'GBP': 0.78, 'JPY': 149.5, 'RUB': 83.5, 'KZT': 503.2 },
         'EUR': { 'USD': 1.09, 'GBP': 0.85, 'JPY': 163.0, 'RUB': 91.0, 'KZT': 547.0 },
         'RUB': { 'USD': 0.012, 'EUR': 0.011, 'GBP': 0.009, 'JPY': 1.8, 'KZT': 6.0 }
     };
     
-    // Если нет данных для выбранной базовой валюты, используем USD
     const ratesForBase = baseRates[baseCurrency] || baseRates['USD'];
     
     for (let i = days; i >= 0; i--) {
@@ -240,14 +221,12 @@ function generateDummyRates(days, baseCurrency) {
         
         const rates = {};
         
-        // Добавляем все валюты с небольшой случайной вариацией
         Object.keys(ratesForBase).forEach(currency => {
             const baseRate = ratesForBase[currency];
-            const variance = 0.98 + Math.random() * 0.04; // ±2%
+            const variance = 0.98 + Math.random() * 0.04;
             rates[currency] = baseRate * variance;
         });
         
-        // Добавляем единичный курс для базовой валюты
         rates[baseCurrency] = 1.0;
         
         dummyData.push({
@@ -260,15 +239,11 @@ function generateDummyRates(days, baseCurrency) {
     return dummyData;
 }
 
-// Получение исторических данных для криптовалют
 async function fetchCryptoHistory(days) {
     try {
-        // Приводим символ валюты к нижнему регистру, как требует API
         const baseCurrency = state.baseCurrency.toLowerCase();
         console.log(`Запрос истории криптовалют в валюте: ${baseCurrency}`);
         
-        // Если выбрана валюта, которую CoinGecko не поддерживает, 
-        // используем USD и затем конвертируем самостоятельно
         let useUsdAndConvert = false;
         const supportedCurrencies = ['usd', 'eur', 'gbp', 'jpy', 'rub', 'cny'];
         
@@ -277,10 +252,8 @@ async function fetchCryptoHistory(days) {
             useUsdAndConvert = true;
         }
         
-        // Запрашиваем данные в поддерживаемой валюте (USD или выбранная)
         const vsCurrency = useUsdAndConvert ? 'usd' : baseCurrency;
         
-        // Запрос данных для Bitcoin
         const response = await fetch(
             `${CRYPTO_API_URL}/coins/bitcoin/market_chart?vs_currency=${vsCurrency}&days=${days}&interval=daily`
         );
@@ -291,7 +264,6 @@ async function fetchCryptoHistory(days) {
         
         const btcData = await response.json();
 
-        // Запрос данных для Ethereum
         const ethResponse = await fetch(
             `${CRYPTO_API_URL}/coins/ethereum/market_chart?vs_currency=${vsCurrency}&days=${days}&interval=daily`
         );
@@ -302,9 +274,7 @@ async function fetchCryptoHistory(days) {
         
         const ethData = await ethResponse.json();
         
-        // Если нужно конвертировать из USD в другую валюту
         if (useUsdAndConvert) {
-            // Получаем курс обмена USD на выбранную валюту
             const exchangeResponse = await fetch(`${EXCHANGE_API_URL}/USD`);
             if (!exchangeResponse.ok) {
                 throw new Error(`Ошибка получения курсов валют: ${exchangeResponse.status}`);
@@ -315,7 +285,6 @@ async function fetchCryptoHistory(days) {
             
             console.log(`Конвертация из USD в ${state.baseCurrency} с курсом: ${rate}`);
             
-            // Конвертируем все цены
             if (btcData.prices) {
                 btcData.prices = btcData.prices.map(price => [price[0], price[1] * rate]);
             }
@@ -335,7 +304,6 @@ async function fetchCryptoHistory(days) {
     } catch (error) {
         console.error('Ошибка при получении истории криптовалют:', error);
         
-        // Возвращаем некоторые фиктивные данные в случае ошибки
         return {
             bitcoin: generateDummyCryptoData(days, state.baseCurrency, 'bitcoin'),
             ethereum: generateDummyCryptoData(days, state.baseCurrency, 'ethereum')
@@ -343,19 +311,16 @@ async function fetchCryptoHistory(days) {
     }
 }
 
-// Генерация фиктивных данных для криптовалют с учетом выбранной валюты
 function generateDummyCryptoData(days, baseCurrency, cryptoType) {
     const prices = [];
     const now = Date.now();
     const dayMs = 24 * 60 * 60 * 1000;
     
-    // Базовые цены в USD
     const baseValues = {
         'bitcoin': { base: 80000, variance: 5000 },
         'ethereum': { base: 2000, variance: 150 }
     };
     
-    // Примерные коэффициенты конвертации из USD
     const conversionRates = {
         'USD': 1,
         'EUR': 0.92,
@@ -366,13 +331,10 @@ function generateDummyCryptoData(days, baseCurrency, cryptoType) {
         'CNY': 7.2
     };
     
-    // Получаем коэффициент конвертации
     const rate = conversionRates[baseCurrency] || 1;
     
-    // Параметры для выбранной криптовалюты
     const { base, variance } = baseValues[cryptoType] || { base: 1000, variance: 100 };
     
-    // Генерируем данные
     for (let i = 0; i <= days; i++) {
         const timestamp = now - (days - i) * dayMs;
         const randomPrice = (base + (Math.random() * 2 - 1) * variance) * rate;
@@ -382,7 +344,6 @@ function generateDummyCryptoData(days, baseCurrency, cryptoType) {
     return prices;
 }
 
-// Обновление графика валют
 function updateCurrencyChart(historicalData) {
     if (!historicalData || historicalData.length === 0) {
         console.error('Нет данных для обновления графика валют');
@@ -390,19 +351,14 @@ function updateCurrencyChart(historicalData) {
     }
 
     try {
-        // Получаем список основных валют
         const mainCurrencies = ['EUR', 'GBP', 'JPY', 'RUB', 'KZT'];
         
-        // Фильтруем только те валюты, которые не совпадают с базовой
         const currencies = mainCurrencies.filter(c => c !== state.baseCurrency);
         
-        // Если данных для какой-то валюты нет - добавим фиктивные
         const latestRates = historicalData[historicalData.length - 1].rates;
         
-        // Проверяем, есть ли данные для каждой валюты
         currencies.forEach(currency => {
             if (latestRates[currency] === undefined) {
-                // Добавляем фиктивные данные если валюты нет
                 const defaultRates = {
                     'EUR': 0.92, 'GBP': 0.78, 'JPY': 149.5, 'RUB': 83.5, 'KZT': 503.2
                 };
@@ -410,28 +366,26 @@ function updateCurrencyChart(historicalData) {
                 historicalData.forEach(day => {
                     if (!day.rates[currency]) {
                         const baseRate = defaultRates[currency] || 1.0;
-                        const variance = 0.98 + Math.random() * 0.04; // ±2%
+                        const variance = 0.98 + Math.random() * 0.04;
                         day.rates[currency] = baseRate * variance;
                     }
                 });
             }
         });
         
-        // Подготавливаем метки дат для оси X
         const labels = historicalData.map(data => 
             new Date(data.date).toLocaleDateString('ru-RU', { month: 'short', day: 'numeric' })
         );
         
         console.log('Метки для графика валют:', labels);
         
-        // Подготавливаем наборы данных для каждой валюты
         const datasets = [];
         const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
         
         currencies.forEach((currency, index) => {
             datasets.push({
                 label: currency,
-                data: historicalData.map(day => day.rates[currency] || null), // null для пропущенных значений
+                data: historicalData.map(day => day.rates[currency] || null),
                 borderColor: colors[index % colors.length],
                 backgroundColor: `${colors[index % colors.length]}22`,
                 fill: false,
@@ -442,7 +396,6 @@ function updateCurrencyChart(historicalData) {
         
         console.log('Наборы данных для графика валют:', datasets);
         
-        // Обновляем график
         state.currencyChart.data.labels = labels;
         state.currencyChart.data.datasets = datasets;
         state.currencyChart.options.plugins.title = {
@@ -456,12 +409,10 @@ function updateCurrencyChart(historicalData) {
         };
         state.currencyChart.update();
         
-        // Обновляем статистические карточки с текущими курсами
         updateCurrencyCards(latestRates);
     } catch (error) {
         console.error('Ошибка при обновлении графика валют:', error);
         
-        // Отображаем сообщение об ошибке на графике
         state.currencyChart.data.datasets = [{
             label: 'Ошибка загрузки данных',
             data: [],
@@ -471,7 +422,6 @@ function updateCurrencyChart(historicalData) {
     }
 }
 
-// Обновление графика криптовалют
 function updateCryptoChart(cryptoHistory) {
     if (!cryptoHistory || (!cryptoHistory.bitcoin.length && !cryptoHistory.ethereum.length)) {
         console.error('Нет данных для обновления графика криптовалют');
@@ -479,14 +429,12 @@ function updateCryptoChart(cryptoHistory) {
     }
 
     try {
-        // Подготавливаем метки дат для оси X (берем из данных биткоина)
         const labels = cryptoHistory.bitcoin.map(price => 
             new Date(price[0]).toLocaleDateString('ru-RU', { month: 'short', day: 'numeric' })
         );
         
         console.log('Метки для графика криптовалют:', labels);
         
-        // Подготавливаем наборы данных для криптовалют
         const datasets = [
             {
                 label: 'Bitcoin',
@@ -510,14 +458,11 @@ function updateCryptoChart(cryptoHistory) {
         
         console.log('Наборы данных для графика криптовалют:', datasets);
         
-        // Получаем символ валюты для подсказок
         const currencySymbol = getCurrencySymbol(state.baseCurrency);
         
-        // Обновляем график
         state.cryptoChart.data.labels = labels;
         state.cryptoChart.data.datasets = datasets;
         
-        // Обновляем заголовок графика
         state.cryptoChart.options.plugins.title = {
             display: true,
             text: `Динамика криптовалют в ${state.baseCurrency}`,
@@ -528,7 +473,6 @@ function updateCryptoChart(cryptoHistory) {
             }
         };
         
-        // Обновляем подсказки с учетом валюты
         state.cryptoChart.options.plugins.tooltip.callbacks.label = function(context) {
             const value = context.raw.toLocaleString('ru-RU', {maximumFractionDigits: 2});
             return `${context.dataset.label}: ${currencySymbol}${value}`;
@@ -538,7 +482,6 @@ function updateCryptoChart(cryptoHistory) {
     } catch (error) {
         console.error('Ошибка при обновлении графика криптовалют:', error);
         
-        // Отображаем сообщение об ошибке на графике
         state.cryptoChart.data.datasets = [{
             label: 'Ошибка загрузки данных',
             data: [],
@@ -548,31 +491,25 @@ function updateCryptoChart(cryptoHistory) {
     }
 }
 
-// Обновление данных в зависимости от выбранного периода
 async function updatePeriodData(period) {
     try {
-        // Преобразуем период в количество дней
         const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
         
         console.log(`Загрузка данных для периода: ${period} (${days} дней)`);
         
-        // Показываем индикатор загрузки
         document.querySelectorAll('.chart-container').forEach(container => {
             container.style.opacity = '0.5';
         });
         
-        // Параллельно загружаем данные для валют и криптовалют
         const [historicalRates, cryptoHistory] = await Promise.all([
             fetchHistoricalRates(days),
             fetchCryptoHistory(days)
         ]);
 
-        // Обновляем графики с полученными данными
         if (historicalRates && historicalRates.length > 0) {
             console.log(`Получены данные для ${historicalRates.length} дней`);
             updateCurrencyChart(historicalRates);
             
-            // Также обновляем карточки с курсами валют
             if (historicalRates[historicalRates.length - 1] && historicalRates[historicalRates.length - 1].rates) {
                 updateCurrencyCards(historicalRates[historicalRates.length - 1].rates);
             }
@@ -584,7 +521,6 @@ async function updatePeriodData(period) {
             console.log(`Получены данные криптовалют: BTC - ${cryptoHistory.bitcoin.length} точек, ETH - ${cryptoHistory.ethereum.length} точек`);
             updateCryptoChart(cryptoHistory);
             
-            // Также обновляем карточки с криптовалютами
             if (cryptoHistory.bitcoin.length > 0 && cryptoHistory.ethereum.length > 0) {
                 updateCryptoCards(cryptoHistory);
             }
@@ -594,14 +530,12 @@ async function updatePeriodData(period) {
     } catch (error) {
         console.error('Ошибка при обновлении данных:', error);
     } finally {
-        // Скрываем индикатор загрузки
         document.querySelectorAll('.chart-container').forEach(container => {
             container.style.opacity = '1';
         });
     }
 }
 
-// Функция для обновления карточек с валютами
 function updateCurrencyCards(rates) {
     try {
         if (!rates) {
@@ -611,19 +545,15 @@ function updateCurrencyCards(rates) {
         
         console.log('Обновление карточек валют с данными:', rates);
         
-        // Получаем список основных валют для отображения
         const mainCurrencies = ['EUR', 'GBP', 'JPY', 'RUB', 'KZT'];
         
-        // Отфильтруем валюту, которая является базовой
         const currenciesToShow = mainCurrencies.filter(c => c !== state.baseCurrency);
         
-        // Получаем или создаем контейнер для карточек
         let currencyCardsContainer = document.querySelector('.currency-cards-container');
         
         if (!currencyCardsContainer) {
             console.log('Создаем контейнер для карточек валют');
             
-            // Находим секцию с заголовком "Курс основных валют"
             const currencySection = document.querySelector('.stats-grid, .dashboard-section');
             
             if (currencySection) {
@@ -641,10 +571,8 @@ function updateCurrencyCards(rates) {
             }
         }
         
-        // Очищаем контейнер
         currencyCardsContainer.innerHTML = '';
         
-        // Создаем карточки для каждой валюты
         currenciesToShow.forEach(currency => {
             const rate = rates[currency] || 0;
             
@@ -656,7 +584,6 @@ function updateCurrencyCards(rates) {
             card.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
             card.style.transition = 'transform 0.3s ease';
             
-            // Получаем флаг и название валюты
             const currencyInfo = getCurrencyInfo(currency);
             
             card.innerHTML = `
@@ -674,7 +601,6 @@ function updateCurrencyCards(rates) {
                 </div>
             `;
             
-            // Добавляем эффект при наведении
             card.addEventListener('mouseenter', () => {
                 card.style.transform = 'translateY(-5px)';
             });
@@ -690,7 +616,6 @@ function updateCurrencyCards(rates) {
     }
 }
 
-// Функция для получения информации о валюте
 function getCurrencyInfo(currencyCode) {
     const currencyInfo = {
         'USD': { name: 'Доллар США', icon: '🇺🇸' },
@@ -710,17 +635,14 @@ function getCurrencyInfo(currencyCode) {
     return currencyInfo[currencyCode] || { name: currencyCode, icon: '🌐' };
 }
 
-// Функция для обновления карточек с криптовалютами
 function updateCryptoCards(cryptoHistory) {
     try {
         const btcPrice = cryptoHistory.bitcoin[cryptoHistory.bitcoin.length - 1][1];
         const ethPrice = cryptoHistory.ethereum[cryptoHistory.ethereum.length - 1][1];
         
-        // Получаем символ выбранной валюты
         const currencyInfo = getCurrencyInfo(state.baseCurrency);
         const currencySymbol = getCurrencySymbol(state.baseCurrency);
         
-        // Обновляем карточки с криптовалютами
         const btcCard = document.querySelector('.stat-card:nth-child(1)');
         const ethCard = document.querySelector('.stat-card:nth-child(2)');
         
@@ -729,7 +651,6 @@ function updateCryptoCards(cryptoHistory) {
             if (btcValueElement) {
                 btcValueElement.textContent = `${currencySymbol}${btcPrice.toLocaleString('ru-RU', {maximumFractionDigits: 2})}`;
                 
-                // Добавляем или обновляем подзаголовок с информацией о базовой валюте
                 let subtitleElement = btcCard.querySelector('.crypto-currency-subtitle');
                 if (!subtitleElement) {
                     subtitleElement = document.createElement('div');
@@ -748,7 +669,6 @@ function updateCryptoCards(cryptoHistory) {
             if (ethValueElement) {
                 ethValueElement.textContent = `${currencySymbol}${ethPrice.toLocaleString('ru-RU', {maximumFractionDigits: 2})}`;
                 
-                // Добавляем или обновляем подзаголовок с информацией о базовой валюте
                 let subtitleElement = ethCard.querySelector('.crypto-currency-subtitle');
                 if (!subtitleElement) {
                     subtitleElement = document.createElement('div');
@@ -766,7 +686,6 @@ function updateCryptoCards(cryptoHistory) {
     }
 }
 
-// Функция для получения символа валюты
 function getCurrencySymbol(currencyCode) {
     const symbols = {
         'USD': '$',
@@ -786,7 +705,6 @@ function getCurrencySymbol(currencyCode) {
     return symbols[currencyCode] || currencyCode;
 }
 
-// Функция для инициализации мобильной навигации
 function initMobileNav() {
     const mobileNavToggle = document.getElementById('mobileNavToggle');
     const sidebar = document.querySelector('.sidebar');
@@ -795,7 +713,6 @@ function initMobileNav() {
     
     if (!mobileNavToggle || !sidebar || !backdrop) return;
     
-    // Переключение состояния мобильного меню
     mobileNavToggle.addEventListener('click', () => {
         sidebar.classList.toggle('active');
         backdrop.classList.toggle('active');
@@ -804,7 +721,6 @@ function initMobileNav() {
         body.classList.toggle('menu-open');
     });
     
-    // Закрытие меню при клике на подложку
     backdrop.addEventListener('click', () => {
         sidebar.classList.remove('active');
         backdrop.classList.remove('active');
@@ -813,7 +729,6 @@ function initMobileNav() {
         body.classList.remove('menu-open');
     });
     
-    // Закрытие меню при клике на пункт меню
     const menuLinks = document.querySelectorAll('.menu a');
     menuLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -827,7 +742,6 @@ function initMobileNav() {
         });
     });
     
-    // Настройка поведения при изменении размера окна
     window.addEventListener('resize', () => {
         if (window.innerWidth > 1024) {
             sidebar.classList.remove('active');
@@ -839,17 +753,13 @@ function initMobileNav() {
     });
 }
 
-// Обработчики событий
 document.addEventListener('DOMContentLoaded', async () => {
-    // Инициализация графиков
     initializeCharts();
     
-    // Инициализация конвертера
     document.getElementById('amount').addEventListener('input', convertCurrency);
     document.getElementById('fromCurrency').addEventListener('change', convertCurrency);
     document.getElementById('toCurrency').addEventListener('change', convertCurrency);
     
-    // Обработчик кнопки обмена валют
     document.getElementById('swapCurrencies').addEventListener('click', () => {
         const fromSelect = document.getElementById('fromCurrency');
         const toSelect = document.getElementById('toCurrency');
@@ -859,10 +769,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         convertCurrency();
     });
     
-    // Инициализация конвертации
     convertCurrency();
     
-    // Обработчики для кнопок периода
     document.querySelectorAll('.period-btn').forEach(btn => {
         btn.addEventListener('click', async function(e) {
             e.preventDefault();
@@ -873,18 +781,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (periodText === '30д') period = '30d';
             if (periodText === '3м') period = '90d';
             
-            // Обновляем активную кнопку
             const buttons = this.parentNode.querySelectorAll('.period-btn');
             buttons.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
 
-            // Обновляем данные для выбранного периода
             state.currentPeriod = period;
             await updatePeriodData(period);
         });
     });
     
-    // Обработчик изменения базовой валюты
     document.getElementById('baseCurrency').addEventListener('change', async function(e) {
         const newCurrency = this.value;
         console.log(`Изменение базовой валюты на: ${newCurrency}`);
@@ -893,21 +798,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         await updatePeriodData(state.currentPeriod);
     });
     
-    // Кнопка обновления данных
     const refreshButtons = document.querySelectorAll('.refresh-btn');
     refreshButtons.forEach(button => {
         button.addEventListener('click', async function(e) {
             e.preventDefault();
             console.log('Обновление данных...');
             
-            // Добавляем анимацию вращения для индикации обновления
             this.classList.add('rotating');
             
-            // Сбрасываем кэш перед обновлением
             const timestamp = new Date().getTime();
             
             try {
-                // Получаем свежие данные для текущей базовой валюты
                 const response = await fetch(`${EXCHANGE_API_URL}/${state.baseCurrency}?_=${timestamp}`);
                 if (!response.ok) {
                     throw new Error(`Ошибка запроса: ${response.status}`);
@@ -917,20 +818,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log('Получены свежие курсы валют:', data);
                 
                 if (data && data.rates) {
-                    // Обновляем карточки с текущими курсами
                     updateCurrencyCards(data.rates);
-                    
-                    // Обновляем текущие данные для графиков
                     await updatePeriodData(state.currentPeriod);
-                    
-                    // Уведомление об успешном обновлении
                     showNotification('Курсы валют успешно обновлены', 'success');
                 }
             } catch (error) {
                 console.error('Ошибка при обновлении курсов:', error);
                 showNotification('Не удалось обновить курсы валют', 'error');
             } finally {
-                // Удаляем анимацию вращения
                 setTimeout(() => {
                     this.classList.remove('rotating');
                 }, 500);
@@ -938,80 +833,60 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
     
-    // Инициализация темы
     initTheme();
     
-    // Переключение темы
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
-    // Инициализация при загрузке страницы
     console.log('Инициализация данных при загрузке...');
-    await updatePeriodData('7d'); // Загружаем данные за 7 дней по умолчанию
+    await updatePeriodData('7d');
 
-    // Инициализация мобильной навигации
     initMobileNav();
 });
 
-// Функция инициализации темы
 function initTheme() {
-    // Пробуем получить тему из localStorage
     const savedTheme = localStorage.getItem('dashboardTheme');
     
     if (savedTheme) {
-        // Применяем сохраненную тему
         document.documentElement.setAttribute('data-theme', savedTheme);
     } else {
-        // Проверяем системные настройки
         const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const initialTheme = prefersDarkMode ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', initialTheme);
         localStorage.setItem('dashboardTheme', initialTheme);
     }
     
-    // Обновляем цвета графиков в соответствии с темой
     updateChartColors();
 }
 
-// Функция переключения темы
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
-    // Анимация при переключении
     document.body.style.opacity = '0.98';
     
-    // Применяем новую тему
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('dashboardTheme', newTheme);
     
-    // Обновляем цвета графиков
     updateChartColors();
     
-    // Показываем уведомление
     showNotification(`Тема изменена на ${newTheme === 'dark' ? 'тёмную' : 'светлую'}`, 'info');
     
-    // Возвращаем нормальную прозрачность
     setTimeout(() => {
         document.body.style.opacity = '1';
     }, 300);
 }
 
-// Функция обновления цветов графиков в соответствии с темой
 function updateChartColors() {
     const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
     
-    // Обновляем настройки для всех графиков
     Chart.defaults.color = isDarkTheme ? '#94a3b8' : '#64748b';
     Chart.defaults.borderColor = isDarkTheme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
     
-    // Если графики уже созданы, обновляем их
     if (state.currencyChart) {
-        // Настройки для осей
         state.currencyChart.options.scales.y.grid.color = isDarkTheme 
             ? 'rgba(255, 255, 255, 0.05)' 
             : 'rgba(0, 0, 0, 0.05)';
         
-        // Настройки для тултипов
         state.currencyChart.options.plugins.tooltip.backgroundColor = isDarkTheme 
             ? '#151f38' 
             : '#ffffff';
@@ -1029,12 +904,10 @@ function updateChartColors() {
     }
     
     if (state.cryptoChart) {
-        // Настройки для осей
         state.cryptoChart.options.scales.y.grid.color = isDarkTheme 
             ? 'rgba(255, 255, 255, 0.05)' 
             : 'rgba(0, 0, 0, 0.05)';
         
-        // Настройки для тултипов
         state.cryptoChart.options.plugins.tooltip.backgroundColor = isDarkTheme 
             ? '#151f38' 
             : '#ffffff';
@@ -1052,13 +925,10 @@ function updateChartColors() {
     }
 }
 
-// Функция для отображения уведомлений
 function showNotification(message, type = 'info') {
-    // Проверяем, существует ли контейнер для уведомлений
     let notificationContainer = document.querySelector('.notification-container');
     
     if (!notificationContainer) {
-        // Создаем контейнер для уведомлений, если его нет
         notificationContainer = document.createElement('div');
         notificationContainer.className = 'notification-container';
         notificationContainer.style.position = 'fixed';
@@ -1068,7 +938,6 @@ function showNotification(message, type = 'info') {
         document.body.appendChild(notificationContainer);
     }
     
-    // Создаем элемент уведомления
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.style.padding = '12px 20px';
@@ -1078,7 +947,6 @@ function showNotification(message, type = 'info') {
     notification.style.transform = 'translateX(120%)';
     notification.style.transition = 'transform 0.3s ease';
     
-    // Стилизуем в зависимости от типа
     if (type === 'success') {
         notification.style.backgroundColor = '#10b981';
         notification.style.color = 'white';
@@ -1090,18 +958,14 @@ function showNotification(message, type = 'info') {
         notification.style.color = 'white';
     }
     
-    // Добавляем текст
     notification.textContent = message;
     
-    // Добавляем в контейнер
     notificationContainer.appendChild(notification);
     
-    // Анимация появления
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 50);
     
-    // Убираем через 3 секунды
     setTimeout(() => {
         notification.style.transform = 'translateX(120%)';
         setTimeout(() => {
@@ -1110,7 +974,6 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Вспомогательная функция для получения случайного цвета
 function getRandomColor() {
     const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
     return colors[Math.floor(Math.random() * colors.length)];
