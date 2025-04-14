@@ -5,7 +5,7 @@ let state = {
     baseCurrency: 'USD',
     currencyChart: null,
     cryptoChart: null,
-    currentPeriod: '7d' 
+    currentPeriod: '7d' d
 };
 
 function initializeCharts() {
